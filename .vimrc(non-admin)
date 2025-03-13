@@ -1,0 +1,185 @@
+" No admin support -- can't install LSPs (uses ctag for static symbol
+" definitions with on-the-fly regenration, fuzzy search and terminal support
+
+syntax on
+set tabstop=4
+set shiftwidth=4
+set autoindent
+set number
+set expandtab
+
+if has("autocmd")
+  au BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \   exe "normal! g`\"" |
+        \ endif
+endif
+
+" Don't try to be vi compatible
+set nocompatible
+
+" Helps force plugins to load correctly when it is turned back on below
+filetype off
+
+" TODO: Load plugins here (pathogen or vundle)
+
+autocmd BufNewFile,BufRead *.l5,*.l4 set syntax=c
+
+" Turn on syntax highlighting
+syntax on
+
+" For plugins to load correctly
+filetype plugin indent on
+
+" TODO: Pick a leader key
+" let mapleader = ","
+
+" Security
+set modelines=0
+
+" Show line numbers
+set number
+
+" Show file stats
+set ruler
+
+" Blink cursor on error instead of beeping (grr)
+set visualbell
+
+" Encoding
+set encoding=utf-8
+
+" Whitespace
+set wrap
+set textwidth=79
+set formatoptions=tcqrn1
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set noshiftround
+
+" Cursor motion
+set scrolloff=3
+set backspace=indent,eol,start
+set matchpairs+=<:> " use % to jump between pairs
+runtime! macros/matchit.vim
+
+" Move up/down editor lines
+nnoremap j gj
+nnoremap k gk
+
+" Allow hidden buffers
+set hidden
+
+" Rendering
+set ttyfast
+
+" Status bar
+set laststatus=2
+
+" Last line
+set showmode
+set showcmd
+
+" Set mouse
+set mouse=a
+
+
+" Searching
+nnoremap / /\v
+vnoremap / /\v
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set showmatch
+map <leader><space> :let @/=''<cr> " clear search
+
+" Remap help key.
+inoremap <F1> <ESC>:set invfullscreen<CR>a
+nnoremap <F1> :set invfullscreen<CR>
+vnoremap <F1> :set invfullscreen<CR>
+
+" Textmate holdouts
+
+" Formatting
+map <leader>q gqip
+
+" Visualize tabs and newlines
+set listchars=tab:▸\ ,eol:¬
+" Uncomment this to enable by default:
+" set list " To enable by default
+" Or use your leader key + l to toggle on/off
+map <leader>l :set list!<CR> " Toggle tabs and EOL
+
+" Open vimrc from anywhere
+nnoremap <leader>ev :vsplit $MYVIMRC<CR>
+
+call plug#begin('~/.vim/plugged')
+Plug 'prabirshrestha/vim-lsp'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+call plug#end()
+
+" Split to the right instead of default left
+set splitright
+
+" Fuzzy search mapping
+nnoremap <silent> <leader>f :Files<CR>
+
+" Jump to definition (Doesn't work because clangd not installed)
+" nmap <silent> gd :LspDefinition<CR>
+
+" Begin vim-lsp configuration
+if executable('clangd')
+  " Register clangd as the LSP server for C and C++
+  au User lsp_setup call lsp#register_server({
+        \ 'name': 'clangd',
+        \ 'cmd': {server_info -> ['clangd']},
+        \ 'whitelist': ['c', 'cpp'],
+        \ })
+endif
+
+" Enable LSP-based omni-completion.
+if exists('*lsp#complete')
+  set omnifunc=lsp#complete
+endif
+
+" Tell Vim to look for a 'tags' file in the current directory and parent directories
+set tags=./tags;,tags;
+
+" In normal mode, jump to the tag under the cursor
+nnoremap <leader>gd :tag <C-R>=expand("<cword>")<CR><CR>
+nnoremap <leader>vd :vert stag <C-R>=expand("<cword>")<CR><CR>
+
+" Regenrate ctags mapping
+nnoremap <leader>rt :!ctags -R .<CR>:redraw!<CR>:echo "Tags regenerated!"<CR>
+
+function! s:OpenTerminalVertical(cmd) abort
+  " Create a brand-new vertical split
+  vsplit
+  " Clear it out with a new empty buffer (so we don't replicate the current file)
+  enew
+  " If a command is provided, run it; otherwise open a normal shell
+  if a:cmd ==# ''
+    terminal
+  else
+    execute 'terminal ' . a:cmd
+  endif
+endfunction
+
+" Map <leader>cl to open a vertical terminal (with potential command(s))
+nnoremap <leader>tt :call <SID>OpenTerminalVertical('')<CR>
+" Compile and run tests in the newly spawned terminal
+nnoremap <leader>cc :call <SID>OpenTerminalVertical('make')<CR>
+nnoremap <leader>tc :call <SID>OpenTerminalVertical('make; ./wireroute -f inputs/timeinput/easy_1024.txt')<CR>
+
+" Color scheme (terminal)
+set t_Co=256
+set background=dark
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+" put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
+" in ~/.vim/colors/ and uncomment:
+colorscheme molokai

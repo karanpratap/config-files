@@ -1,0 +1,158 @@
+" vimrc for leveraging LSP with node support (amongst other things)
+
+cat ~/.vimrc
+" Don't try to be vi compatible
+set nocompatible
+
+" Helps force plugins to load correctly when it is turned back on below
+filetype off
+
+" TODO: Load plugins here (pathogen or vundle)
+
+autocmd BufNewFile,BufRead *.l5,*.l4 set syntax=c
+
+" Turn on syntax highlighting
+syntax on
+
+" For plugins to load correctly
+filetype plugin indent on
+
+" TODO: Pick a leader key
+" let mapleader = ","
+
+" Security
+set modelines=0
+
+" Show line numbers
+set number
+
+" Show file stats
+set ruler
+
+" Blink cursor on error instead of beeping (grr)
+set visualbell
+
+" Encoding
+set encoding=utf-8
+
+" Whitespace
+set wrap
+set textwidth=79
+set formatoptions=tcqrn1
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set noshiftround
+
+" Cursor motion
+set scrolloff=3
+set backspace=indent,eol,start
+set matchpairs+=<:> " use % to jump between pairs
+runtime! macros/matchit.vim
+
+" Move up/down editor lines
+nnoremap j gj
+nnoremap k gk
+
+" Allow hidden buffers
+set hidden
+
+" Rendering
+set ttyfast
+
+" Status bar
+set laststatus=2
+
+" Last line
+set showmode
+set showcmd
+
+" Set mouse
+set mouse=a
+
+
+" Searching
+nnoremap / /\v
+vnoremap / /\v
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set showmatch
+map <leader><space> :let @/=''<cr> " clear search
+
+" Remap help key.
+inoremap <F1> <ESC>:set invfullscreen<CR>a
+nnoremap <F1> :set invfullscreen<CR>
+vnoremap <F1> :set invfullscreen<CR>
+
+" Textmate holdouts
+
+" Formatting
+map <leader>q gqip
+
+" Visualize tabs and newlines
+set listchars=tab:▸\ ,eol:¬
+" Uncomment this to enable by default:
+" set list " To enable by default
+" Or use your leader key + l to toggle on/off
+map <leader>l :set list!<CR> " Toggle tabs and EOL
+
+" Color scheme (terminal)
+set t_Co=256
+set background=dark
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+" put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
+" in ~/.vim/colors/ and uncomment:
+colorscheme molokai
+
+" Key Mapping to make CR confirm first item from autocomplete suggestions
+inoremap <silent><expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
+
+" Key Mapping to make CR confirm a autocomplete
+inoremap <expr> <cr> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+
+" manually trigger Formatting
+nnoremap <silent> <leader>f :CocCommand editor.action.format<CR>
+
+" Open vplit to the right instead of the left
+set splitright
+
+" Jump in current window (default behavior)
+nmap <silent> gd <Plug>(coc-definition)
+
+" Jump using vertical split
+nmap <silent> <leader>vd :vsplit<CR>:call CocActionAsync('jumpDefinition')<CR>
+
+" Fuzzy search
+call plug#begin('~/.vim/plugged')
+" Install coc.nvim from the release branch
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+call plug#end()
+
+" Fuzzy search mapping
+nnoremap <silent> <leader>f :Files<CR>
+
+" Return to the place in the file you were previously working on
+if has("autocmd")
+  augroup last_position_jump
+    autocmd!
+    autocmd BufReadPost *
+          \ if line("'\"") > 0 && line("'\"") <= line("$") |
+          \   exe "normal! g`\"" |
+          \ endif
+  augroup END
+endif
+
+" Use xclip to copy the visually selected text to the clipboard on Linux
+vnoremap <leader>y :w !xclip -selection clipboard<CR><CR>
+
+" Open vimrc from anywhere
+nnoremap <leader>ev :vsplit $MYVIMRC<CR>
+
+" disable warning
+let g:coc_disable_startup_warning = 1

@@ -4,3 +4,5 @@ To install Plugins, update .vimrc, close and re-open vim (or do `:source
 $MYVIMRC` in normal mode), and issue the command `:PlugInstall`.
 
 Reload required to apply changes.
+
+References: [Ayu Mirage](https://github.com/ayu-theme/ayu-vim) | [coc.nvim](https://github.com/neoclide/coc.nvim) | [NERDTree](https://github.com/preservim/nerdtree)

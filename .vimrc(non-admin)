@@ -120,7 +120,20 @@ call plug#begin('~/.vim/plugged')
 Plug 'prabirshrestha/vim-lsp'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'ayu-theme/ayu-vim' " or other package manager
+Plug 'Yggdroot/indentLine' " Indent guide plugin
+Plug 'preservim/nerdtree' " File explorer sidebar plugin (NERDTree)
 call plug#end()
+
+" Sidebar
+nnoremap <leader>n :NERDTreeToggle<CR>
+
+" put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
+" in ~/.vim/colors/ and uncomment:
+"...
+set termguicolors     " enable true colors support
+let ayucolor="dark" " for mirage version of theme
+colorscheme ayu
 
 " Split to the right instead of default left
 set splitright
@@ -175,11 +188,39 @@ nnoremap <leader>tt :call <SID>OpenTerminalVertical('')<CR>
 nnoremap <leader>cc :call <SID>OpenTerminalVertical('make')<CR>
 nnoremap <leader>tc :call <SID>OpenTerminalVertical('make; ./wireroute -f inputs/timeinput/easy_1024.txt')<CR>
 
+" enter terminal normal mode
+tnoremap <leader>tr <C-\><C-n>
+
+" Toggle comment for a single line or a selected range,
+" preserving indentation.
+function! ToggleComment() range
+  for lnum in range(a:firstline, a:lastline)
+    let line = getline(lnum)
+    " Check if the line is already commented (ignoring leading whitespace)
+    if line =~ '^\s*\/\/'
+      " Uncomment: remove the comment marker, keeping the indent.
+      let newline = substitute(line, '^\(\s*\)\/\/\s\?', '\1', '')
+    else
+      " Comment: add "// " after the indentation.
+      let newline = substitute(line, '^\(\s*\)', '\1// ', '')
+    endif
+    call setline(lnum, newline)
+  endfor
+endfunction
+
+" Map <leader>c in normal mode to toggle comment on the current line
+nnoremap <leader>c :call ToggleComment()<CR>
+
+" Map <leader>c in visual mode to toggle comment on the selected lines
+xnoremap <leader>c :<C-U>'<,'>call ToggleComment()<CR>
+
+nnoremap <leader><space> :nohlsearch<CR>
+
+" Reload vimrc
+nnoremap <leader>sv :source $MYVIMRC<CR>:echo "vimrc reloaded!"<CR>
+
 " Color scheme (terminal)
 set t_Co=256
 set background=dark
 let g:solarized_termcolors=256
 let g:solarized_termtrans=1
-" put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
-" in ~/.vim/colors/ and uncomment:
-colorscheme molokai

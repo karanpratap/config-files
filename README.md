@@ -5,4 +5,4 @@ $MYVIMRC` in normal mode), and issue the command `:PlugInstall`.
 
 Reload required to apply changes.
 
-References: [Ayu Mirage](https://github.com/ayu-theme/ayu-vim) | [coc.nvim](https://github.com/neoclide/coc.nvim) | [NERDTree](https://github.com/preservim/nerdtree)
+References: [Ayu Mirage](https://github.com/ayu-theme/ayu-vim) | [coc.nvim](https://github.com/neoclide/coc.nvim) | [NERDTree](https://github.com/preservim/nerdtree) | [fugitive](https://github.com/tpope/vim-fugitive) | [airline](https://github.com/vim-airline/vim-airline) | [ultisnips](https://github.com/SirVer/ultisnips) | [vim-snippets](https://github.com/honza/vim-snippets)

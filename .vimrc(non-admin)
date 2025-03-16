@@ -123,20 +123,55 @@ Plug 'junegunn/fzf.vim'
 Plug 'ayu-theme/ayu-vim' " or other package manager
 Plug 'Yggdroot/indentLine' " Indent guide plugin
 Plug 'preservim/nerdtree' " File explorer sidebar plugin (NERDTree)
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'tpope/vim-fugitive'
+" Snippet engine and collection
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 call plug#end()
 
 " Sidebar
 nnoremap <leader>n :NERDTreeToggle<CR>
 
+" === Fugitive keybinds ===
+" Split and show changes for the current file AFTER changes are pulled
+nnoremap <leader>dc :Gdiffsplit HEAD~1<CR>
+" Show status
+nnoremap <leader>gs :Gstatus<CR>
+" Add, commit and push current file
+function! GitCommitPushCurrentFile() abort
+  " Stage the current file (Gwrite stages the file via fugitive)
+  execute 'Gwrite'
+  " Prompt for a commit message
+  let l:msg = input('Commit message: ')
+  if empty(l:msg)
+    echo "Commit cancelled: no message provided."
+    return
+  endif
+  " Commit with the provided message
+  execute 'Git commit -m ' . shellescape(l:msg)
+  " Push changes to the remote
+  execute 'Git push'
+endfunction
+
+" Map <leader>gp to run the function
+nnoremap <leader>gp :call GitCommitPushCurrentFile()<CR>
+" === End fugitive keybinds ===
+
 " put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
 " in ~/.vim/colors/ and uncomment:
 "...
 set termguicolors     " enable true colors support
-let ayucolor="dark" " for mirage version of theme
+let ayucolor="mirage" " for mirage version of theme
 colorscheme ayu
 
 " Split to the right instead of default left
 set splitright
+
+" (Optional) Configure UltiSnips
+" For example, use <tab> to trigger snippet expansion (if not already set up)
+let g:UltiSnipsExpandTrigger="<tab>"
 
 " Fuzzy search mapping
 nnoremap <silent> <leader>f :Files<CR>
@@ -188,6 +223,12 @@ nnoremap <leader>tt :call <SID>OpenTerminalVertical('')<CR>
 nnoremap <leader>cc :call <SID>OpenTerminalVertical('make')<CR>
 nnoremap <leader>tc :call <SID>OpenTerminalVertical('make; ./wireroute -f inputs/timeinput/easy_1024.txt')<CR>
 
+" Half page down and half page up
+nnoremap <leader><Down> <C-b>
+nnoremap <leader><Up> <C-f>
+nnoremap <S-Up> <C-u>
+nnoremap <S-Down> <C-d>
+
 " enter terminal normal mode
 tnoremap <leader>tr <C-\><C-n>
 
@@ -218,6 +259,8 @@ nnoremap <leader><space> :nohlsearch<CR>
 
 " Reload vimrc
 nnoremap <leader>sv :source $MYVIMRC<CR>:echo "vimrc reloaded!"<CR>
+
+let g:airline#extensions#fugitive#enabled = 1
 
 " Color scheme (terminal)
 set t_Co=256

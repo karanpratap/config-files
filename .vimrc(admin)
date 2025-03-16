@@ -128,19 +128,50 @@ call plug#begin('~/.vim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'ayu-theme/ayu-vim' " or other package manager
 Plug 'Yggdroot/indentLine' " Indent guide plugin
 Plug 'preservim/nerdtree' " File explorer sidebar plugin (NERDTree)
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'tpope/vim-fugitive'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 call plug#end()
 
 " Sidebar
 nnoremap <leader>n :NERDTreeToggle<CR>
 
+" === Fugitive keybinds ===
+" Split and show changes for the current file AFTER changes are pulled
+nnoremap <leader>dc :Gdiffsplit HEAD~1<CR>
+" Show status
+nnoremap <leader>gs :Gstatus<CR>
+" Add, commit and push current file
+function! GitCommitPushCurrentFile() abort
+  " Stage the current file (Gwrite stages the file via fugitive)
+  execute 'Gwrite'
+  " Prompt for a commit message
+  let l:msg = input('Commit message: ')
+  if empty(l:msg)
+    echo "Commit cancelled: no message provided."
+    return
+  endif
+  " Commit with the provided message
+  execute 'Git commit -m ' . shellescape(l:msg)
+  " Push changes to the remote
+  execute 'Git push'
+endfunction
+
+" Map <leader>gp to run the function
+nnoremap <leader>gp :call GitCommitPushCurrentFile()<CR>
+" === End fugitive keybinds ===
+
 " put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
 " in ~/.vim/colors/ and uncomment:
 "...
 set termguicolors     " enable true colors support
-let ayucolor="mirage" " for mirage version of theme
+let ayucolor="dark" " for mirage version of theme
 colorscheme ayu
 
 " Fuzzy search mapping

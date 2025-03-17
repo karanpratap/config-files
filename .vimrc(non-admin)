@@ -129,7 +129,16 @@ Plug 'tpope/vim-fugitive'
 " Snippet engine and collection
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'rhysd/vim-clang-format'
 call plug#end()
+
+let g:cpp_class_scope_highlight = 1
+let g:cpp_member_variable_highlight = 1
+let g:cpp_concepts_highlight = 1
+
+" Auto format on save cpp
+autocmd BufWritePre *.c,*.cpp,*.h,*.hpp silent! ClangFormat
 
 " Sidebar
 nnoremap <leader>n :NERDTreeToggle<CR>
@@ -163,7 +172,7 @@ nnoremap <leader>gp :call GitCommitPushCurrentFile()<CR>
 " in ~/.vim/colors/ and uncomment:
 "...
 set termguicolors     " enable true colors support
-let ayucolor="mirage" " for mirage version of theme
+let ayucolor="dark" " for mirage version of theme
 colorscheme ayu
 
 " Split to the right instead of default left

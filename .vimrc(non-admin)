@@ -131,11 +131,22 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rhysd/vim-clang-format'
+Plug 'dense-analysis/ale'
+Plug 'ycm-core/YouCompleteMe'
 call plug#end()
 
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_concepts_highlight = 1
+
+" Tell ALE to use cppcheck for C and C++ files
+let g:ale_linters = {
+      \ 'cpp': ['cppcheck'],
+      \ 'c': ['cppcheck'],
+      \ }
+
+" Optionally configure cppcheck options (e.g., enable all warnings, use C++11 standard)
+let g:ale_cpp_cppcheck_options = '--enable=all --std=c++11'
 
 " Auto format on save cpp
 autocmd BufWritePre *.c,*.cpp,*.h,*.hpp silent! ClangFormat
@@ -172,7 +183,7 @@ nnoremap <leader>gp :call GitCommitPushCurrentFile()<CR>
 " in ~/.vim/colors/ and uncomment:
 "...
 set termguicolors     " enable true colors support
-let ayucolor="dark" " for mirage version of theme
+let ayucolor="mirage" " for mirage version of theme
 colorscheme ayu
 
 " Split to the right instead of default left
